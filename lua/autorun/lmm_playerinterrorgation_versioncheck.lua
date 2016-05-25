@@ -1,5 +1,5 @@
 --[[You really should not edit this!]]--
-local version = "1.0" -- DO NOT EDIT THIS!
+local version = "1.1" -- DO NOT EDIT THIS!
 local version_url = "https://raw.githubusercontent.com/XxLMM13xXgaming/lmm_player_Interrogation/master/version.txt" -- DO NOT EDIT THIS!
 local update_url = "https://github.com/XxLMM13xXgaming/lmm_player_Interrogation" -- DO NOT EDIT THIS!
 local update_ur = "https://raw.githubusercontent.com/XxLMM13xXgaming/lmm_player_Interrogation/master/versionur.txt" -- DO NOT EDIT THIS!
@@ -12,13 +12,6 @@ if (SERVER) then
 
 	AddCSLuaFile("lmm_pi_config.lua")
 	include("lmm_pi_config.lua")
-
-	resource.AddFile("materials/icons/LMMPI_information.png") --
-	resource.AddFile("materials/icons/LMMPI_arrow_up.png")
-	resource.AddFile("materials/icons/LMMPI_arrow_down.png")
-	resource.AddFile("materials/icons/LMMPI_bomb.png") --
-	resource.AddFile("materials/icons/LMMPI_door_out.png") --
-	resource.AddFile("materials/icons/LMMPI_control_pause_blue.png") --
 
 	util.AddNetworkString(addon_id.."VersionCheck")
 
