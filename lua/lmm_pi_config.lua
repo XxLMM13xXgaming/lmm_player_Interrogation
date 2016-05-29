@@ -16,4 +16,4 @@ LMMPIConfig.AdminGroups = {
 
 LMMPIConfig.MOTDCommand = "ulx motd"
 
-LMMPIConfig.TimeToBanFor = 60 -- time in min to ban for
+LMMPIConfig.FreezeCommand = "ulx freeze" -- this will only work if the player comes after the command like ulx freeze <player> idk how other admin mods work...

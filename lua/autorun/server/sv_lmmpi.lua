@@ -10,6 +10,9 @@ util.AddNetworkString("LMMPIEnterText")
 util.AddNetworkString("LMMPIGetMessage")
 util.AddNetworkString("LMMPIGetMessageCaller")
 util.AddNetworkString("LMMPIForceMOTD")
+util.AddNetworkString("LMMPIBanPlayer")
+util.AddNetworkString("LMMPIKickPlayer")
+util.AddNetworkString("LMMPIUnbanPlayer")
 util.AddNetworkString("LMMPINotifyN")
 
 function LMMPIOpenIMenu(ply)
@@ -34,8 +37,6 @@ local function GetPlayerByName( ply )
 end
 
 function LMMPIInterrogatePlayerFinal(calling_ply, target_ply, reason)
-	print(calling_ply)
-	print(target_ply)
 	if target_ply != nil then
 		net.Start("LMMPIInterrorBeginCalling")
 			net.WriteString(reason)
@@ -91,6 +92,55 @@ net.Receive("LMMPIEnterText", function(len, ply)
 			net.WriteString(message)
 			net.WriteEntity(ply)
 		net.Send(sendto)
+	end
+end)
+
+net.Receive("LMMPIBanPlayer",function(len, ply)
+	local target = net.ReadEntity()
+	local min = net.ReadFloat()
+	local reason = net.ReadString()
+	if table.HasValue(LMMPIConfig.AdminGroups,ply:GetUserGroup()) then
+		target:Ban(min, false, ply:Nick().." has banned you for "..min.."min for the reason: "..reason)
+		net.Start("LMMPIGetMessage")
+			net.WriteString("You will be banned in: ")
+			net.WriteEntity(ply)
+		net.Send(target)
+		net.Start("LMMPIGetMessage")
+			net.WriteString("30")
+			net.WriteEntity(ply)
+		net.Send(target)
+		local number = 30
+		timer.Create("LMMPI_BanTimerText_"..target:SteamID64(), 1, 29, function()
+			net.Start("LMMPIGetMessage")
+				net.WriteString(number - 1)
+				net.WriteEntity(ply)
+			net.Send(target)
+			number = number - 1
+		end)
+		timer.Create("LMMPI_BanTimer_"..target:SteamID64(), 30, 0, function()
+			target:Kick(ply:Nick().." has banned you for "..min.." min for the reason: "..reason)
+		end)
+	end
+end)
+
+net.Receive("LMMPIKickPlayer",function(len, ply)
+	local target = net.ReadEntity()
+	local reason = net.ReadString()
+	if table.HasValue(LMMPIConfig.AdminGroups,ply:GetUserGroup()) then
+		target:Kick(ply:Nick().." has kicked you... "..reason)
+	end
+end)
+
+net.Receive("LMMPIUnbanPlayer",function(len, ply)
+	local target = net.ReadEntity()
+	local reason = net.ReadString()
+
+	if table.HasValue(LMMPIConfig.AdminGroups, ply:GetUserGroup()) then
+			timer.Destroy("LMMPI_BanTimerText_"..target:SteamID64())
+			timer.Destroy("LMMPI_BanTimer_"..target:SteamID64())
+			net.Start("LMMPIForceClose")
+			net.Send(target)
+			LMMPIInterrogatePlayerFinal(ply, target, reason)
 	end
 end)
 

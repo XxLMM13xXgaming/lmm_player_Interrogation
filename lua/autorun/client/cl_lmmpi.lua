@@ -239,11 +239,170 @@ net.Receive("LMMPIInterrorBeginCalling",function()
 	BanPlayer:SetImage( "icon16/bomb.png" )
 	BanPlayer:SizeToContents()
 	BanPlayer.DoClick = function()
-		DFrame:Close()
-		net.Start("LMMPIEndTheInterror")
+		net.Start("LMMPIEnterText")
 			net.WriteEntity(target)
+			net.WriteString("Im gonna ban you now... Follow the rules next time!")
 		net.SendToServer()
-		RunConsoleCommand("ulx", "ban", ""..target:Nick().."", LMMPIConfig.TimeToBanFor, reason)
+		DFrame:Close()
+				local DFrame2 = vgui.Create( "DFrame" )
+				DFrame2:SetSize( 500, 110 )
+				DFrame2:Center()
+				DFrame2:SetDraggable( true )
+				DFrame2:MakePopup()
+				DFrame2:SetTitle( "" )
+				DFrame2:ShowCloseButton( false )
+				DFrame2.Paint = function( self, w, h )
+					draw.RoundedBox(2, 0, 0, DFrame2:GetWide(), DFrame2:GetTall(), Color(35, 35, 35, 250))
+					draw.RoundedBox(2, 0, 0, DFrame2:GetWide(), 30, Color(40, 40, 40, 255))
+					draw.SimpleText( "Interrogate "..target:Nick(), "LMMPITitleFont", DFrame2:GetWide() / 2, 15, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+				end
+
+				local frameclose = vgui.Create("DButton", DFrame2)
+				frameclose:SetSize(20, 20)
+				frameclose:SetPos(DFrame2:GetWide() - frameclose:GetWide() - 3, 3)
+				frameclose:SetText("X");
+				frameclose:SetTextColor(Color(0,0,0,255))
+				frameclose:SetFont("LMMPIfontclose")
+				frameclose.hover = false
+				frameclose.DoClick = function()
+					DFrame2:Close()
+					net.Start("LMMPIEndTheInterror")
+						net.WriteEntity(target)
+					net.SendToServer()
+				end
+				frameclose.OnCursorEntered = function(self)
+					self.hover = true
+				end
+				frameclose.OnCursorExited = function(self)
+					self.hover = false
+				end
+				function frameclose:Paint(w, h)
+					draw.RoundedBox(0, 0, 0, w, h, (self.hover and Color(255,15,15,250)) or Color(255,255,255,255)) -- Paints on hover
+					frameclose:SetTextColor(self.hover and Color(255,255,255,250) or Color(0,0,0,255))
+				end
+
+				local TextEntry = vgui.Create( "DTextEntry", DFrame2 )	-- create the form as a child of frame
+				TextEntry:SetPos( 10, 50 )
+				TextEntry:SetSize(DFrame2:GetWide() - 20,20)
+				TextEntry:SetText( "Enter the time in min to ban "..target:Nick().." for..." )
+				TextEntry.OnEnter = function( self )
+
+				end
+
+				local BanPlayerB = vgui.Create( "DButton", DFrame2 )
+				BanPlayerB:SetPos( 10, 75 )
+				BanPlayerB:SetSize( DFrame2:GetWide() - 20,20 )
+				BanPlayerB:SetText( "Ban "..target:Nick() )
+				BanPlayerB.OnCursorEntered = function(self)
+					self.hover = true
+				end
+				BanPlayerB.OnCursorExited = function(self)
+					self.hover = false
+				end
+				BanPlayerB.Paint = function( self, w, h )
+					draw.RoundedBox(0, 0, 0, w, h, (self.hover and Color(0,160,255,250)) or Color(255,255,255,255)) -- Paints on hover
+					BanPlayerB:SetTextColor(self.hover and Color(255,255,255,250) or Color(0,0,0,255))
+				end
+				BanPlayerB.DoClick = function()
+					DFrame2:Close()
+					net.Start("LMMPIBanPlayer")
+						net.WriteEntity(target)
+						net.WriteFloat(tonumber(TextEntry:GetValue()))
+						net.WriteString(reason)
+					net.SendToServer()
+						local DFrame3 = vgui.Create( "DFrame" )
+						DFrame3:SetSize( 500, 370 )
+						DFrame3:Center()
+						DFrame3:SetDraggable( true )
+						DFrame3:MakePopup()
+						DFrame3:SetTitle( "" )
+						DFrame3:ShowCloseButton( false )
+						DFrame3.Paint = function( self, w, h )
+							draw.RoundedBox(2, 0, 0, DFrame3:GetWide(), DFrame3:GetTall(), Color(35, 35, 35, 250))
+							draw.RoundedBox(2, 0, 0, DFrame3:GetWide(), 30, Color(40, 40, 40, 255))
+							draw.SimpleText( "Interrogate "..target:Nick(), "LMMPITitleFont", DFrame3:GetWide() / 2, 15, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+						end
+
+						local frameclose = vgui.Create("DButton", DFrame3)
+						frameclose:SetSize(20, 20)
+						frameclose:SetPos(DFrame3:GetWide() - frameclose:GetWide() - 3, 3)
+						frameclose:SetText("X");
+						frameclose:SetTextColor(Color(0,0,0,255))
+						frameclose:SetFont("LMMPIfontclose")
+						frameclose.hover = false
+						frameclose.DoClick = function()
+							DFrame3:Close()
+							net.Start("LMMPIEndTheInterror")
+								net.WriteEntity(target)
+							net.SendToServer()
+							print(LMMPIConfig.FreezeCommand.." "..target:Nick().."")
+							LocalPlayer():ConCommand(LMMPIConfig.FreezeCommand.." "..target:Nick())
+						end
+						frameclose.OnCursorEntered = function(self)
+							self.hover = true
+						end
+						frameclose.OnCursorExited = function(self)
+							self.hover = false
+						end
+						function frameclose:Paint(w, h)
+							draw.RoundedBox(0, 0, 0, w, h, (self.hover and Color(255,15,15,250)) or Color(255,255,255,255)) -- Paints on hover
+							frameclose:SetTextColor(self.hover and Color(255,255,255,250) or Color(0,0,0,255))
+						end
+
+						local reasonL = vgui.Create("DLabel", DFrame3)
+						reasonL:SetPos(10, 35)
+						reasonL:SetSize(DFrame3:GetWide() - 20, 20)
+						reasonL:SetText("Reason: "..reason)
+						reasonL:SetTextColor(Color(255,0,0,255))
+						reasonL:SetFont("LMMPILabelSmall")
+
+						local richtext = vgui.Create( "RichText", DFrame3 )
+						richtext:SetPos(10, 60)
+						richtext:SetSize(DFrame3:GetWide() - 20, 250)
+
+						richtext:InsertColorChange( 192, 192, 192, 255 )
+						richtext:AppendText( "You are interrogating "..target:Nick().." for the reason of "..reason..". Make sure to prove your point!\n\n" )
+
+						net.Receive("LMMPIGetMessageCaller", function(len, ply)
+							local message = net.ReadString()
+							local ply = net.ReadEntity()
+
+							if IsValid(richtext) then
+								richtext:InsertColorChange(192,192,192,255)
+								richtext:AppendText( os.date("%I:%M:%S %p") )
+								richtext:InsertColorChange(255,255,255,255)
+								richtext:AppendText(" - ")
+								local plycolor = team.GetColor(ply:Team())
+								richtext:InsertColorChange(plycolor.r, plycolor.g, plycolor.b, plycolor.a)
+								richtext:AppendText(ply:Nick())
+								richtext:InsertColorChange(255,255,255,255)
+								richtext:AppendText(": "..message.."\n")
+							end
+						end)
+
+						local UnBanPlayerB = vgui.Create( "DButton", DFrame3 )
+						UnBanPlayerB:SetPos( 10, 320 )
+						UnBanPlayerB:SetSize( DFrame3:GetWide() - 20,20 )
+						UnBanPlayerB:SetText( "Abort ban for "..target:Nick() )
+						UnBanPlayerB.OnCursorEntered = function(self)
+							self.hover = true
+						end
+						UnBanPlayerB.OnCursorExited = function(self)
+							self.hover = false
+						end
+						UnBanPlayerB.Paint = function( self, w, h )
+							draw.RoundedBox(0, 0, 0, w, h, (self.hover and Color(0,160,255,250)) or Color(255,255,255,255)) -- Paints on hover
+							UnBanPlayerB:SetTextColor(self.hover and Color(255,255,255,250) or Color(0,0,0,255))
+						end
+						UnBanPlayerB.DoClick = function()
+							DFrame3:Close()
+							net.Start("LMMPIUnbanPlayer")
+								net.WriteEntity(target)
+								net.WriteString(reason)
+							net.SendToServer()
+						end
+			end
+
 	end
 
 	KickPlayer = vgui.Create( "DImageButton", DFrame )
@@ -255,7 +414,10 @@ net.Receive("LMMPIInterrorBeginCalling",function()
 		net.Start("LMMPIEndTheInterror")
 			net.WriteEntity(target)
 		net.SendToServer()
-		RunConsoleCommand("ulx", "kick", ""..target:Nick().."", reason)
+		net.Start("LMMPIKickPlayer")
+			net.WriteEntity(target)
+			net.WriteString(reason)
+		net.SendToServer()
 	end
 
 	FreezePlayer = vgui.Create( "DImageButton", DFrame )
@@ -267,7 +429,7 @@ net.Receive("LMMPIInterrorBeginCalling",function()
 		net.Start("LMMPIEndTheInterror")
 			net.WriteEntity(target)
 		net.SendToServer()
-		RunConsoleCommand("ulx", "freeze", ""..target:Nick().."")
+		LocalPlayer():ConCommand(LMMPIConfig.FreezeCommand.." "..target:Nick())
 	end
 
 	Up = vgui.Create( "DImageButton", DFrame )
@@ -289,7 +451,7 @@ net.Receive("LMMPIInterrorBeginCalling",function()
 	chat.AddText(Color(255,0,0), "WARNING: There is no second option to abort ban/kick so be careful!")
 	chat.AddText(Color(255,0,0), "Here is the icon key...")
 	chat.AddText(Color(255,255,255), "Blue I: Opens MOTD on both people")
-	chat.AddText(Color(255,255,255), "Bomb: Bans the player for "..LMMPIConfig.TimeToBanFor.." min")
+	chat.AddText(Color(255,255,255), "Bomb: Opens ban menu")
 	chat.AddText(Color(255,255,255), "Door with out arrow: Kicks player")
 	chat.AddText(Color(255,255,255), "Pause button: Closes menu and freezes player")
 	chat.AddText(Color(255,255,255), "Up arrow: Moves convo to the top")
