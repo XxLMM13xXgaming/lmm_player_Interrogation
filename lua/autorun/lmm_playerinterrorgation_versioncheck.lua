@@ -1,5 +1,5 @@
 --[[You really should not edit this!]]--
-local version = "1.2" -- DO NOT EDIT THIS!
+local version = "1.3" -- DO NOT EDIT THIS!
 local version_url = "https://raw.githubusercontent.com/XxLMM13xXgaming/lmm_player_Interrogation/master/version.txt" -- DO NOT EDIT THIS!
 local update_url = "https://github.com/XxLMM13xXgaming/lmm_player_Interrogation" -- DO NOT EDIT THIS!
 local update_ur = "https://raw.githubusercontent.com/XxLMM13xXgaming/lmm_player_Interrogation/master/versionur.txt" -- DO NOT EDIT THIS!
@@ -27,7 +27,7 @@ if (SERVER) then
 			net.WriteString(thenewversiontext)
 		net.Send(ply)
 	end )
-
+ 
 	http.Fetch(version_url, function(body, len, headers, code, ply)
 		if (string.Trim(body) ~= version) then
 			MsgC( Color(255,0,0), "["..addon_name.." ("..version..")] You are NOT using the latest version! (version: "..string.Trim(body)..")\n" )

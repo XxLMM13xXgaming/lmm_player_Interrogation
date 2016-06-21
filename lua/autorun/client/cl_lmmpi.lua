@@ -195,6 +195,23 @@ net.Receive("LMMPIInterrorBeginCalling",function()
 	richtext:InsertColorChange( 192, 192, 192, 255 )
 	richtext:AppendText( "You are interrogating "..target:Nick().." for the reason of "..reason..". Make sure to prove your point!\n\n" )
 
+	net.Receive("LMMPIGetMessage", function(len, ply)
+		local message = net.ReadString()
+		local ply = net.ReadEntity()
+
+		if IsValid(richtext) then
+			richtext:InsertColorChange(192,192,192,255)
+			richtext:AppendText( os.date("%I:%M:%S %p") )
+			richtext:InsertColorChange(255,255,255,255)
+			richtext:AppendText(" - ")
+			local plycolor = team.GetColor(ply:Team())
+			richtext:InsertColorChange(plycolor.r, plycolor.g, plycolor.b, plycolor.a)
+			richtext:AppendText(ply:Nick())
+			richtext:InsertColorChange(255,255,255,255)
+			richtext:AppendText(": "..message.."\n")
+		end
+	end)
+
 	net.Receive("LMMPIGetMessageCaller", function(len, ply)
 		local message = net.ReadString()
 		local ply = net.ReadEntity()
@@ -517,6 +534,23 @@ net.Receive("LMMPIInterrorBegin",function()
 	richtext:AppendText( "You are being interrogated by "..calling:Nick().." for the reason of "..reason..". Make sure to prove your point and defend yourself!\n\n" )
 
 	net.Receive("LMMPIGetMessage", function(len, ply)
+		local message = net.ReadString()
+		local ply = net.ReadEntity()
+
+		if IsValid(richtext) then
+			richtext:InsertColorChange(192,192,192,255)
+			richtext:AppendText( os.date("%I:%M:%S %p") )
+			richtext:InsertColorChange(255,255,255,255)
+			richtext:AppendText(" - ")
+			local plycolor = team.GetColor(ply:Team())
+			richtext:InsertColorChange(plycolor.r, plycolor.g, plycolor.b, plycolor.a)
+			richtext:AppendText(ply:Nick())
+			richtext:InsertColorChange(255,255,255,255)
+			richtext:AppendText(": "..message.."\n")
+		end
+	end)
+
+	net.Receive("LMMPIGetMessageCaller", function(len, ply)
 		local message = net.ReadString()
 		local ply = net.ReadEntity()
 

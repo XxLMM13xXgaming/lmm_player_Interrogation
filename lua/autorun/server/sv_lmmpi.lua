@@ -38,6 +38,8 @@ end
 
 function LMMPIInterrogatePlayerFinal(calling_ply, target_ply, reason)
 	if target_ply != nil then
+		calling_ply.Interrorgating = target_ply
+		target_ply.InterrorgatingBy = calling_ply
 		net.Start("LMMPIInterrorBeginCalling")
 			net.WriteString(reason)
 			net.WriteEntity(target_ply)
@@ -77,13 +79,15 @@ net.Receive("LMMPIEndTheInterror", function(len, ply)
 		local target = net.ReadEntity()
 		net.Start("LMMPIForceClose")
 		net.Send(target)
+		ply.Interrorgating = false
+		target.InterrorgatingBy = false
 	end
 end)
 
 net.Receive("LMMPIEnterText", function(len, ply)
-	if table.HasValue(LMMPIConfig.AdminGroups,ply:GetUserGroup()) then
-		local sendto = net.ReadEntity()
-		local message = net.ReadString()
+	local sendto = net.ReadEntity()
+	local message = net.ReadString()
+	if ply.Interrorgating == sendto then
 		net.Start("LMMPIGetMessage")
 			net.WriteString(message)
 			net.WriteEntity(ply)
@@ -91,7 +95,16 @@ net.Receive("LMMPIEnterText", function(len, ply)
 		net.Start("LMMPIGetMessageCaller")
 			net.WriteString(message)
 			net.WriteEntity(ply)
+		net.Send(ply)
+	elseif ply.InterrorgatingBy == sendto then
+		net.Start("LMMPIGetMessage")
+			net.WriteString(message)
+			net.WriteEntity(ply)
 		net.Send(sendto)
+		net.Start("LMMPIGetMessageCaller")
+			net.WriteString(message)
+			net.WriteEntity(ply)
+		net.Send(ply)
 	end
 end)
 
