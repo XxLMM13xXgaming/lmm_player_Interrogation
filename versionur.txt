@@ -1,1 +1,1 @@
-Updated the ban, kick, and freeze command to support all admin mods.. Also a awesome new ban system that will countdown and lots of other things! I will make a new video soon!
+Fixed the whole addon! The addon was completly not working PLEASE UPDATE NOW ASAP!
